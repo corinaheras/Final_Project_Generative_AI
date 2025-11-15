@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Análisis Detallado - Salinas</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.css" />
+    <style>
+        /* RESET COMPLETO PARA ELIMINAR MÁRGENES NO DESEADOS */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f7fa;
+            color: #333;
+            width: 100%;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 20px;
+            width: 100%;
+        }
+
+        header {
+            background: linear-gradient(135deg, #e6b400 0%, #ffa000 51%, #ff8f00 100%);
+            color: white;
+            padding: 30px 0;
+            text-align: center;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 100%;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 2.5rem;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            margin-top: 10px;
+            opacity: 0.9;
+        }
+
+        .back-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            border: 2px solid white;
+            display: inline-block;
+            min-height: 44px;
+            box-sizing: border-box;
+        }
+
+        .back-btn:hover {
+            background: white;
+            color: #ff8f00;
+        }
+
+        .dashboard-section {
+            background: white;
+            border-radius: 8px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            width: 100%;
+        }
+
+        h2 {
+            color: #e6b400;
+            border-bottom: 2px solid #eaeaea;
+            padding-bottom: 10px;
+            margin-top: 0;
+        }
+
+        h3 {
+            color: #ff8f00;
+            margin-top: 20px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+            width: 100%;
+        }
+
+        .stat-item {
+            background: linear-gradient(135deg, #fff8e1 0%, #ffecb3 100%);
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            border-left: 4px solid #ff8f00;
+        }
+
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #e65100;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .conclusion {
+            background: linear-gradient(135deg, #e6b400 0%, #ff8f00 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin-top: 30px;
+            width: 100%;
+        }
+
+        .conclusion h2 {
+            color: white;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .conclusion h3 {
+            color: white;
+        }
+
+        .city-stats {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            width: 100%;
+        }
+
+        .additional-stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 20px;
+            width: 100%;
+        }
+
+        .additional-stat {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        .review-card {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            backdrop-filter: blur(10px);
+            width: 100%;
+        }
+
+        .review-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 10px;
+            gap: 10px;
+        }
+
+        .review-hotel {
+            font-weight: bold;
+            font-size: 1.1rem;
+            flex: 1;
+        }
+
+        .review-score {
+            background: #4CAF50;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .review-text {
+            line-height: 1.5;
+            opacity: 0.95;
+            font-style: italic;
+            text-align: justify;
+        }
+
+        .cities-navigation {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin: 30px 0;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            width: 100%;
+        }
+
+        .cities-navigation h2 {
+            text-align: center;
+            color: #e6b400;
+            margin-bottom: 30px;
+        }
+
+        .nav-cards {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            width: 100%;
+        }
+
+        .nav-card {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 10px;
+            text-align: center;
+            border: 2px solid #e9ecef;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .nav-card.current {
+            border-color: #ff8f00;
+            background: linear-gradient(135deg, #f8f9fa 0%, #fff8e1 100%);
+        }
+
+        .nav-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+        }
+
+        .nav-card h3 {
+            color: #e6b400;
+            margin-bottom: 10px;
+            font-size: 1.3rem;
+        }
+
+        .nav-card p {
+            color: #666;
+            margin-bottom: 15px;
+            flex: 1;
+        }
+
+        .city-stats-mini {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            margin: 15px 0;
+            font-size: 0.9rem;
+            color: #555;
+        }
+
+        .nav-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: #e6b400;
+            color: white;
+            padding: 12px 25px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            width: 100%;
+            min-height: 44px;
+            box-sizing: border-box;
+        }
+
+        .nav-btn:hover {
+            background: #cc9a00;
+            transform: scale(1.05);
+        }
+
+        .current-btn {
+            background: #6c757d;
+            cursor: not-allowed;
+        }
+
+        .current-btn:hover {
+            background: #6c757d;
+            transform: none;
+        }
+
+        /* HEADER RESPONSIVE MEJORADO */
+        .header-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            align-items: center;
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        @media (min-width: 769px) {
+            .header-container {
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+                text-align: left;
+            }
+            
+            .header-text {
+                flex: 1;
+            }
+        }
+
+        /* MEJORAS RESPONSIVE OPTIMIZADAS */
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            header {
+                padding: 25px 0;
+                margin-bottom: 25px;
+                border-radius: 0;
+            }
+            
+            .header-container {
+                padding: 0 15px;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+                line-height: 1.3;
+            }
+            
+            .subtitle {
+                font-size: 1rem;
+                margin-top: 8px;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 12px;
+            }
+            
+            .stat-item {
+                padding: 15px;
+            }
+            
+            .stat-value {
+                font-size: 1.5rem;
+            }
+            
+            .stat-label {
+                font-size: 0.85rem;
+            }
+            
+            .nav-cards {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            
+            .nav-card {
+                padding: 20px;
+            }
+            
+            .dashboard-section {
+                padding: 20px;
+                margin-bottom: 20px;
+            }
+            
+            .conclusion {
+                padding: 25px;
+                margin-top: 25px;
+            }
+            
+            .city-stats {
+                padding: 15px;
+            }
+            
+            .review-card {
+                padding: 15px;
+                margin-bottom: 12px;
+            }
+            
+            .review-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+            
+            .review-hotel {
+                font-size: 1rem;
+            }
+            
+            .cities-navigation {
+                padding: 25px;
+                margin: 25px 0;
+            }
+            
+            .back-btn {
+                padding: 10px 18px;
+                font-size: 0.9rem;
+            }
+            
+            .additional-stats-grid {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 10px;
+            }
+            
+            header {
+                padding: 20px 0;
+                margin-bottom: 20px;
+            }
+            
+            .header-container {
+                padding: 0 10px;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+            
+            h1 {
+                font-size: 1.5rem;
+            }
+            
+            h2 {
+                font-size: 1.3rem;
+            }
+            
+            h3 {
+                font-size: 1.1rem;
+            }
+            
+            .stat-value {
+                font-size: 1.4rem;
+            }
+            
+            .dashboard-section {
+                padding: 15px;
+            }
+            
+            .conclusion {
+                padding: 20px;
+            }
+            
+            .nav-card {
+                padding: 15px;
+            }
+            
+            .nav-btn {
+                padding: 10px 20px;
+                font-size: 0.9rem;
+            }
+            
+            .city-stats-mini {
+                font-size: 0.8rem;
+            }
+            
+            .review-text {
+                font-size: 0.9rem;
+                text-align: left;
+            }
+        }
+
+        /* Estilos para pantallas muy pequeñas (menos de 360px) */
+        @media (max-width: 360px) {
+            .container {
+                padding: 5px;
+            }
+            
+            header {
+                padding: 15px 0;
+            }
+            
+            .header-container {
+                padding: 0 8px;
+            }
+            
+            h1 {
+                font-size: 1.3rem;
+            }
+            
+            .subtitle {
+                font-size: 0.9rem;
+            }
+            
+            .stat-item {
+                padding: 12px;
+            }
+            
+            .stat-value {
+                font-size: 1.3rem;
+            }
+            
+            .nav-card h3 {
+                font-size: 1.1rem;
+            }
+            
+            .back-btn {
+                padding: 8px 16px;
+                font-size: 0.85rem;
+            }
+        }
+
+        /* MEJORAS ESPECÍFICAS PARA LAPTOPS Y PANTALLAS GRANDES */
+        @media (min-width: 1200px) {
+            .container {
+                max-width: 1200px;
+                margin: 0 auto;
+            }
+            
+            header {
+                max-width: 1200px;
+                margin-left: auto;
+                margin-right: auto;
+            }
+        }
+
+        /* GARANTIZAR QUE TODO OCUPE EL 100% DEL ANCHO */
+        html, body {
+            width: 100%;
+            max-width: 100%;
+            overflow-x: hidden;
+        }
+
+        .container > * {
+            width: 100%;
+        }
+
+        /* ELIMINAR CUALQUIER MARGEN LATERAL EN ELEMENTOS PRINCIPALES */
+        body > * {
+            margin-left: 0;
+            margin-right: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="header-container">
+                <div class="header-text">
+                    <h1>Análisis Detallado: Salinas</h1>
+                    <div class="subtitle">Segunda mejor ciudad para eventos culturales - Tema Dorado</div>
+                </div>
+                <a href="index.html" class="back-btn">← Volver al Dashboard</a>
+            </div>
+        </header>
+
+        <!-- Estadísticas Principales -->
+        <div class="conclusion">
+            <h2>Análisis Detallado: Salinas</h2>
+
+            <div class="city-stats">
+                <h3>Estadísticas Principales de Salinas</h3>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-value">90</div>
+                        <div class="stat-label">Hoteles Analizados</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">$529.77</div>
+                        <div class="stat-label">Precio Promedio</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">8.90</div>
+                        <div class="stat-label">Rating Promedio</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">3.77</div>
+                        <div class="stat-label">Estrellas Promedio</div>
+                    </div>
+                </div>
+
+                <div class="additional-stats-grid">
+                    <div class="additional-stat">
+                        <strong>Precio por persona/día:</strong> $44.15
+                    </div>
+                    <div class="additional-stat">
+                        <strong>Distancia a la playa:</strong> 0.35 km
+                    </div>
+                </div>
+            </div>
+
+            <!-- Top Reviews de Salinas -->
+            <div class="top-reviews">
+                <h3>Top 5 Mejores Comentarios - Salinas</h3>
+
+                <div class="review-card">
+                    <div class="review-header">
+                        <span class="review-hotel">Hotel Colon Salinas Oceanview Apartment</span>
+                        <span class="review-score">100%</span>
+                    </div>
+                    <div class="review-text">
+                        "El departamento está muy bien ubicado. Se aprecia la ciudad y de frente la playa. Volvería a contratar sus servicios ya que el anfitrión estuvo todo el tiempo muy atento y servicial..."
+                    </div>
+                </div>
+
+                <div class="review-card">
+                    <div class="review-header">
+                        <span class="review-hotel">Sunset Beach Resort</span>
+                        <span class="review-score">98%</span>
+                    </div>
+                    <div class="review-text">
+                        "Increíble vista al mar y servicio de primera. Las instalaciones están impecables y el personal siempre dispuesto a ayudar. Perfecto para eventos familiares."
+                    </div>
+                </div>
+
+                <div class="review-card">
+                    <div class="review-header">
+                        <span class="review-hotel">Miramar Salinas</span>
+                        <span class="review-score">96%</span>
+                    </div>
+                    <div class="review-text">
+                        "La ubicación es privilegiada, a pocos pasos de la playa. Las habitaciones son espaciosas y limpias. Ideal para quienes buscan comodidad y proximidad al mar."
+                    </div>
+                </div>
+
+                <div class="review-card">
+                    <div class="review-header">
+                        <span class="review-hotel">Salinas Beach Hotel</span>
+                        <span class="review-score">95%</span>
+                    </div>
+                    <div class="review-text">
+                        "Excelente relación calidad-precio. El desayuno incluido es variado y delicioso. Muy recomendado para viajes de negocios y placer."
+                    </div>
+                </div>
+
+                <div class="review-card">
+                    <div class="review-header">
+                        <span class="review-hotel">Costa del Sol</span>
+                        <span class="review-score">94%</span>
+                    </div>
+                    <div class="review-text">
+                        "Ambiente familiar y acogedor. La piscina está muy bien mantenida y las áreas comunes son amplias. Perfecto para eventos pequeños."
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Información Adicional -->
+        <div class="dashboard-section">
+            <h2>Características Destacadas de Salinas</h2>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-value">1.78km</div>
+                    <div class="stat-label">Distancia al Centro</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">0.35km</div>
+                    <div class="stat-label">Distancia a Playa</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">-2.2106</div>
+                    <div class="stat-label">Latitud</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">-80.9599</div>
+                    <div class="stat-label">Longitud</div>
+                </div>
+            </div>
+
+            <h3>🎯 Potencial para Eventos</h3>
+            <p><strong>Ventajas Competitivas:</strong></p>
+            <ul>
+                <li><strong>Mayor Rating Promedio:</strong> 8.90 (el más alto entre todas las ciudades)</li>
+                <li><strong>Excelente ubicación playera:</strong> Solo 350m promedio a la playa</li>
+                <li><strong>Infraestructura de calidad:</strong> 3.77 estrellas promedio</li>
+                <li><strong>Potencial premium:</strong> Ideal para eventos exclusivos y de alta gama</li>
+            </ul>
+        </div>
+
+        <!-- Navegación entre ciudades -->
+        <div class="cities-navigation">
+            <h2>Explora las Mejores Ciudades</h2>
+            <div class="nav-cards">
+                <div class="nav-card">
+                    <h3>🥇 Manta</h3>
+                    <p>Ciudad #1 en potencial para eventos</p>
+                    <div class="city-stats-mini">
+                        <span>151 hoteles</span>
+                        <span>Rating: 8.63</span>
+                        <span>Precio: $420.56</span>
+                    </div>
+                    <a href="index.html" class="nav-btn">Ver Análisis Completo</a>
+                </div>
+                
+                <div class="nav-card current">
+                    <h3>🥈 Salinas</h3>
+                    <p>Ciudad #2 en potencial para eventos</p>
+                    <div class="city-stats-mini">
+                        <span>90 hoteles</span>
+                        <span>Rating: 8.90</span>
+                        <span>Precio: $529.77</span>
+                    </div>
+                    <button class="nav-btn current-btn" disabled>Página Actual</button>
+                </div>
+                
+                <div class="nav-card">
+                    <h3>🥉 Villamil Playas</h3>
+                    <p>Ciudad #3 en potencial para eventos</p>
+                    <div class="city-stats-mini">
+                        <span>71 hoteles</span>
+                        <span>Rating: 8.73</span>
+                        <span>Precio: $651.06</span>
+                    </div>
+                    <a href="villamil.html" class="nav-btn">Ver Análisis Completo</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

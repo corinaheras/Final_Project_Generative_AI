@@ -9,6 +9,295 @@
     <script src="https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.css" />
     <style>
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+
+            header {
+                padding: 20px 0;
+                margin-bottom: 20px;
+            }
+
+            h1 {
+                font-size: 1.8rem;
+                padding: 0 10px;
+            }
+
+            .subtitle {
+                font-size: 1rem;
+                padding: 0 10px;
+            }
+
+            .dashboard-section {
+                padding: 15px;
+                margin-bottom: 20px;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+
+            .stat-card,
+            .stat-item {
+                padding: 12px;
+            }
+
+            .stat-value {
+                font-size: 1.5rem;
+            }
+
+            .city-table {
+                font-size: 0.85rem;
+                display: block;
+                overflow-x: auto;
+                white-space: nowrap;
+            }
+
+            .city-table th,
+            .city-table td {
+                padding: 8px 6px;
+                font-size: 0.8rem;
+            }
+
+            .charts-container,
+            .ranking-section {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+
+            .chart-card {
+                padding: 12px;
+            }
+
+            .map-container {
+                height: 300px;
+            }
+
+            .conclusion {
+                padding: 20px 15px;
+                margin-top: 20px;
+            }
+
+            .conclusion h2 {
+                font-size: 1.5rem;
+            }
+
+            .city-stats {
+                padding: 15px;
+            }
+
+            .additional-stats {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+
+            .stat-row {
+                padding: 6px 0;
+                font-size: 0.9rem;
+            }
+
+            .top-reviews {
+                padding: 15px;
+            }
+
+            .review-card {
+                padding: 15px;
+                margin-bottom: 12px;
+            }
+
+            .review-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+
+            .review-hotel {
+                font-size: 1rem;
+            }
+
+            .attractions-section {
+                display: flex;
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .attraction-category ul {
+                padding-left: 20px;
+                font-size: 0.9rem;
+            }
+
+            .service-highlights {
+                font-size: 0.9rem;
+            }
+
+            .hotel-service {
+                margin-bottom: 15px;
+                padding: 12px;
+                font-size: 0.85rem;
+            }
+
+            .stars-breakdown .category-section {
+                margin-bottom: 20px;
+            }
+
+            .category-section h5 {
+                font-size: 1rem;
+                margin-bottom: 8px;
+            }
+
+            .category-section p {
+                font-size: 0.9rem;
+            }
+
+            .percent-stats {
+                display: grid;
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+
+            .Observaciones {
+                padding: 20px 15px;
+                margin: 20px 0;
+            }
+
+            .city-observation {
+                padding: 15px;
+                margin-bottom: 15px;
+            }
+
+            .city-observation h3 {
+                font-size: 1.2rem;
+            }
+
+            .city-observation ul {
+                padding-left: 18px;
+            }
+
+            .city-observation li {
+                font-size: 0.9rem;
+                margin-bottom: 6px;
+            }
+        }
+
+        /* Estilos adicionales para pantallas muy pequeñas */
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.5rem;
+            }
+
+            h2 {
+                font-size: 1.3rem;
+            }
+
+            h3 {
+                font-size: 1.1rem;
+            }
+
+            .stat-value {
+                font-size: 1.3rem;
+            }
+
+            .city-table {
+                font-size: 0.75rem;
+            }
+
+            .review-text {
+                font-size: 0.9rem;
+            }
+
+            .ranking-item {
+                padding: 8px;
+                font-size: 0.9rem;
+            }
+
+            .rank-number {
+                width: 25px;
+                height: 25px;
+                font-size: 0.8rem;
+            }
+        }
+
+        /* Mejoras generales de responsive */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .charts-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .ranking-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        /* Asegurar que las tablas sean responsive */
+        .city-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        /* Mejorar la legibilidad en móviles */
+        .review-text {
+            line-height: 1.4;
+            text-align: justify;
+        }
+
+        /* Asegurar que los elementos no se salgan de la pantalla */
+        .conclusion,
+        .dashboard-section,
+        .Observaciones {
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+
+        /* Mejorar la visualización de listas en móviles */
+        .attraction-category ul,
+        .city-observation ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+
+        .attraction-category li,
+        .city-observation li {
+            margin-bottom: 8px;
+            line-height: 1.4;
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
@@ -313,6 +602,176 @@
                     </tbody>
                 </table>
             </div>
+
+
+
+
+
+
+
+
+            <!-- Navegación entre ciudades -->
+            <div class="cities-navigation">
+                <h2>Explora las Mejores Ciudades</h2>
+                <div class="nav-cards">
+                    <div class="nav-card current">
+                        <h3>🥇 Manta</h3>
+                        <p>Ciudad #1 en potencial para eventos</p>
+                        <div class="city-stats-mini">
+                            <span>151 hoteles</span>
+                            <span>Rating: 8.63</span>
+                            <span>Precio: $420.56</span>
+                        </div>
+                        <button class="nav-btn current-btn" disabled>Página Actual</button>
+                    </div>
+
+                    <div class="nav-card">
+                        <h3>🥈 Salinas</h3>
+                        <p>Ciudad #2 en potencial para eventos</p>
+                        <div class="city-stats-mini">
+                            <span>90 hoteles</span>
+                            <span>Rating: 8.90</span>
+                            <span>Precio: $529.77</span>
+                        </div>
+                        <a href="salinas.html" class="nav-btn">Ver Análisis Completo</a>
+                    </div>
+
+                    <div class="nav-card">
+                        <h3>🥉 Villamil Playas</h3>
+                        <p>Ciudad #3 en potencial para eventos</p>
+                        <div class="city-stats-mini">
+                            <span>71 hoteles</span>
+                            <span>Rating: 8.73</span>
+                            <span>Precio: $651.06</span>
+                        </div>
+                        <a href="villamil.html" class="nav-btn">Ver Análisis Completo</a>
+                    </div>
+                </div>
+            </div>
+
+            <style>
+                .cities-navigation {
+                    background: white;
+                    padding: 30px;
+                    border-radius: 10px;
+                    margin: 30px 0;
+                    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                }
+
+                .cities-navigation h2 {
+                    text-align: center;
+                    color: #1e5799;
+                    margin-bottom: 30px;
+                }
+
+                .nav-cards {
+                    display: grid;
+                    grid-template-columns: repeat(3, 1fr);
+                    gap: 20px;
+                }
+
+                .nav-card {
+                    background: #f8f9fa;
+                    padding: 25px;
+                    border-radius: 10px;
+                    text-align: center;
+                    border: 2px solid #e9ecef;
+                    transition: all 0.3s ease;
+                }
+
+                .nav-card.current {
+                    border-color: #1e5799;
+                    background: linear-gradient(135deg, #f8f9fa 0%, #e3f2fd 100%);
+                }
+
+                .nav-card:hover {
+                    transform: translateY(-5px);
+                    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+                }
+
+                .nav-card h3 {
+                    color: #1e5799;
+                    margin-bottom: 10px;
+                    font-size: 1.3rem;
+                }
+
+                .nav-card p {
+                    color: #666;
+                    margin-bottom: 15px;
+                }
+
+                .city-stats-mini {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 5px;
+                    margin: 15px 0;
+                    font-size: 0.9rem;
+                    color: #555;
+                }
+
+                .nav-btn {
+                    display: inline-block;
+                    background: #1e5799;
+                    color: white;
+                    padding: 12px 25px;
+                    border-radius: 25px;
+                    text-decoration: none;
+                    font-weight: bold;
+                    transition: all 0.3s ease;
+                    border: none;
+                    cursor: pointer;
+                    width: 100%;
+                }
+
+                .nav-btn:hover {
+                    background: #16437d;
+                    transform: scale(1.05);
+                }
+
+                .current-btn {
+                    background: #6c757d;
+                    cursor: not-allowed;
+                }
+
+                .current-btn:hover {
+                    background: #6c757d;
+                    transform: none;
+                }
+
+                @media (max-width: 768px) {
+                    .nav-cards {
+                        grid-template-columns: 1fr;
+                    }
+
+                    .nav-card {
+                        padding: 20px;
+                    }
+                }
+            </style>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         </div>
 
         <div class="dashboard-section">

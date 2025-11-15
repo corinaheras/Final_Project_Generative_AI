@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Análisis Detallado - Villamil Playas</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.css" />
+    <style>
+        /* RESET COMPLETO PARA ELIMINAR MÁRGENES NO DESEADOS */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f7fa;
+            color: #333;
+            width: 100%;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 20px;
+            width: 100%;
+        }
+
+        header {
+            background: linear-gradient(135deg, #0097a7 0%, #00bcd4 51%, #26c6da 100%);
+            color: white;
+            padding: 30px 0;
+            text-align: center;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 100%;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 2.5rem;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            margin-top: 10px;
+            opacity: 0.9;
+        }
+
+        .back-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            border: 2px solid white;
+            display: inline-block;
+            min-height: 44px;
+            box-sizing: border-box;
+        }
+
+        .back-btn:hover {
+            background: white;
+            color: #0097a7;
+        }
+
+        .dashboard-section {
+            background: white;
+            border-radius: 8px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            width: 100%;
+        }
+
+        h2 {
+            color: #0097a7;
+            border-bottom: 2px solid #eaeaea;
+            padding-bottom: 10px;
+            margin-top: 0;
+        }
+
+        h3 {
+            color: #00bcd4;
+            margin-top: 20px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+            width: 100%;
+        }
+
+        .stat-item {
+            background: linear-gradient(135deg, #e0f7fa 0%, #b2ebf2 100%);
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            border-left: 4px solid #0097a7;
+        }
+
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #006064;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .conclusion {
+            background: linear-gradient(135deg, #0097a7 0%, #00bcd4 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin-top: 30px;
+            width: 100%;
+        }
+
+        .conclusion h2 {
+            color: white;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .conclusion h3 {
+            color: white;
+        }
+
+        .city-stats {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            width: 100%;
+        }
+
+        .additional-stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 20px;
+            width: 100%;
+        }
+
+        .additional-stat {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        .review-card {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            backdrop-filter: blur(10px);
+            width: 100%;
+        }
+
+        .review-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 10px;
+            gap: 10px;
+        }
+
+        .review-hotel {
+            font-weight: bold;
+            font-size: 1.1rem;
+            flex: 1;
+        }
+
+        .review-score {
+            background: #4CAF50;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .review-text {
+            line-height: 1.5;
+            opacity: 0.95;
+            font-style: italic;
+            text-align: justify;
+        }
+
+        .cities-navigation {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin: 30px 0;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            width: 100%;
+        }
+
+        .cities-navigation h2 {
+            text-align: center;
+            color: #0097a7;
+            margin-bottom: 30px;
+        }
+
+        .nav-cards {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            width: 100%;
+        }
+
+        .nav-card {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 10px;
+            text-align: center;
+            border: 2px solid #e9ecef;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .nav-card.current {
+            border-color: #00bcd4;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e0f7fa 100%);
+        }
+
+        .nav-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+        }
+
+        .nav-card h3 {
+            color: #0097a7;
+            margin-bottom: 10px;
+            font-size: 1.3rem;
+        }
+
+        .nav-card p {
+            color: #666;
+            margin-bottom: 15px;
+            flex: 1;
+        }
+
+        .city-stats-mini {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            margin: 15px 0;
+            font-size: 0.9rem;
+            color: #555;
+        }
+
+        .nav-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: #0097a7;
+            color: white;
+            padding: 12px 25px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            width: 100%;
+            min-height: 44px;
+            box-sizing: border-box;
+        }
+
+        .nav-btn:hover {
+            background: #007c91;
+            transform: scale(1.05);
+        }
+
+        .current-btn {
+            background: #6c757d;
+            cursor: not-allowed;
+        }
+
+        .current-btn:hover {
+            background: #6c757d;
+            transform: none;
+        }
+
+        /* HEADER RESPONSIVE MEJORADO */
+        .header-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            align-items: center;
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        @media (min-width: 769px) {
+            .header-container {
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+                text-align: left;
+            }
+            
+            .header-text {
+                flex: 1;
+            }
+        }
+
+        /* MEJORAS RESPONSIVE OPTIMIZADAS */
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            header {
+                padding: 25px 0;
+                margin-bottom: 25px;
+                border-radius: 0;
+            }
+            
+            .header-container {
+                padding: 0 15px;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+                line-height: 1.3;
+            }
+            
+            .subtitle {
+                font-size: 1rem;
+                margin-top: 8px;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 12px;
+            }
+            
+            .stat-item {
+                padding: 15px;
+            }
+            
+            .stat-value {
+                font-size: 1.5rem;
+            }
+            
+            .stat-label {
+                font-size: 0.85rem;
+            }
+            
+            .nav-cards {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            
+            .nav-card {
+                padding: 20px;
+            }
+            
+            .dashboard-section {
+                padding: 20px;
+                margin-bottom: 20px;
+            }
+            
+            .conclusion {
+                padding: 25px;
+                margin-top: 25px;
+            }
+            
+            .city-stats {
+                padding: 15px;
+            }
+            
+            .review-card {
+                padding: 15px;
+                margin-bottom: 12px;
+            }
+            
+            .review-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+            
+            .review-hotel {
+                font-size: 1rem;
+            }
+            
+            .cities-navigation {
+                padding: 25px;
+                margin: 25px 0;
+            }
+            
+            .back-btn {
+                padding: 10px 18px;
+                font-size: 0.9rem;
+            }
+            
+            .additional-stats-grid {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 10px;
+            }
+            
+            header {
+                padding: 20px 0;
+                margin-bottom: 20px;
+            }
+            
+            .header-container {
+                padding: 0 10px;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+            
+            h1 {
+                font-size: 1.5rem;
+            }
+            
+            h2 {
+                font-size: 1.3rem;
+            }
+            
+            h3 {
+                font-size: 1.1rem;
+            }
+            
+            .stat-value {
+                font-size: 1.4rem;
+            }
+            
+            .dashboard-section {
+                padding: 15px;
+            }
+            
+            .conclusion {
+                padding: 20px;
+            }
+            
+            .nav-card {
+                padding: 15px;
+            }
+            
+            .nav-btn {
+                padding: 10px 20px;
+                font-size: 0.9rem;
+            }
+            
+            .city-stats-mini {
+                font-size: 0.8rem;
+            }
+            
+            .review-text {
+                font-size: 0.9rem;
+                text-align: left;
+            }
+        }
+
+        /* Estilos para pantallas muy pequeñas (menos de 360px) */
+        @media (max-width: 360px) {
+            .container {
+                padding: 5px;
+            }
+            
+            header {
+                padding: 15px 0;
+            }
+            
+            .header-container {
+                padding: 0 8px;
+            }
+            
+            h1 {
+                font-size: 1.3rem;
+            }
+            
+            .subtitle {
+                font-size: 0.9rem;
+            }
+            
+            .stat-item {
+                padding: 12px;
+            }
+            
+            .stat-value {
+                font-size: 1.3rem;
+            }
+            
+            .nav-card h3 {
+                font-size: 1.1rem;
+            }
+            
+            .back-btn {
+                padding: 8px 16px;
+                font-size: 0.85rem;
+            }
+        }
+
+        /* MEJORAS ESPECÍFICAS PARA LAPTOPS Y PANTALLAS GRANDES */
+        @media (min-width: 1200px) {
+            .container {
+                max-width: 1200px;
+                margin: 0 auto;
+            }
+            
+            header {
+                max-width: 1200px;
+                margin-left: auto;
+                margin-right: auto;
+            }
+        }
+
+        /* GARANTIZAR QUE TODO OCUPE EL 100% DEL ANCHO */
+        html, body {
+            width: 100%;
+            max-width: 100%;
+            overflow-x: hidden;
+        }
+
+        .container > * {
+            width: 100%;
+        }
+
+        /* ELIMINAR CUALQUIER MARGEN LATERAL EN ELEMENTOS PRINCIPALES */
+        body > * {
+            margin-left: 0;
+            margin-right: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="header-container">
+                <div class="header-text">
+                    <h1>Análisis Detallado: Villamil Playas</h1>
+                    <div class="subtitle">Tercera mejor ciudad para eventos culturales - Tema Turquesa</div>
+                </div>
+                <a href="index.html" class="back-btn">← Volver al Dashboard</a>
+            </div>
+        </header>
+
+        <!-- El resto del contenido permanece igual -->
+        <!-- Estadísticas Principales -->
+        <div class="conclusion">
+            <h2>Análisis Detallado: Villamil Playas</h2>
+
+            <div class="city-stats">
+                <h3>Estadísticas Principales de Villamil Playas</h3>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-value">71</div>
+                        <div class="stat-label">Hoteles Analizados</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">$651.06</div>
+                        <div class="stat-label">Precio Promedio</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">8.73</div>
+                        <div class="stat-label">Rating Promedio</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">3.63</div>
+                        <div class="stat-label">Estrellas Promedio</div>
+                    </div>
+                </div>
+
+                <div class="additional-stats-grid">
+                    <div class="additional-stat">
+                        <strong>Precio por persona/día:</strong> $54.25
+                    </div>
+                    <div class="additional-stat">
+                        <strong>Distancia a la playa:</strong> 0.21 km
+                    </div>
+                </div>
+            </div>
+
+            <!-- Top Reviews de Villamil Playas -->
+            <div class="top-reviews">
+                <h3>Top 5 Mejores Comentarios - Villamil Playas</h3>
+
+                <div class="review-card">
+                    <div class="review-header">
+                        <span class="review-hotel">Hotel La Mar Playas</span>
+                        <span class="review-score">97%</span>
+                    </div>
+                    <div class="review-text">
+                        "Ubicación perfecta frente al mar. Las habitaciones son amplias y el personal extremadamente amable. Ideal para desconectar y disfrutar de la playa."
+                    </div>
+                </div>
+
+                <div class="review-card">
+                    <div class="review-header">
+                        <span class="review-hotel">Un Dia Boutique Resort</span>
+                        <span class="review-score">96%</span>
+                    </div>
+                    <div class="review-text">
+                        "Experiencia única en un resort boutique. El diseño es espectacular y los detalles hacen la diferencia. Perfecto para eventos íntimos y románticos."
+                    </div>
+                </div>
+
+                <div class="review-card">
+                    <div class="review-header">
+                        <span class="review-hotel">Villamil Beach Resort</span>
+                        <span class="review-score">95%</span>
+                    </div>
+                    <div class="review-text">
+                        "Increíble servicio todo incluido. Las actividades son variadas y la comida excepcional. Muy recomendado para grupos grandes y eventos corporativos."
+                    </div>
+                </div>
+
+                <div class="review-card">
+                    <div class="review-header">
+                        <span class="review-hotel">Ocean View Villamil</span>
+                        <span class="review-score">94%</span>
+                    </div>
+                    <div class="review-text">
+                        "Las vistas al océano son impresionantes desde cada habitación. La piscina infinita es un plus increíble. Servicio de primera categoría."
+                    </div>
+                </div>
+
+                <div class="review-card">
+                    <div class="review-header">
+                        <span class="review-hotel">Playas Eco Lodge</span>
+                        <span class="review-score">93%</span>
+                    </div>
+                    <div class="review-text">
+                        "Combinación perfecta entre lujo y sostenibilidad. El concepto ecológico se integra maravillosamente con las comodidades modernas. Ideal para eventos verdes."
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Información Adicional -->
+        <div class="dashboard-section">
+            <h2>Características Destacadas de Villamil Playas</h2>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-value">3.99km</div>
+                    <div class="stat-label">Distancia al Centro</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">0.21km</div>
+                    <div class="stat-label">Distancia a Playa</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">-2.6486</div>
+                    <div class="stat-label">Latitud</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">-80.3899</div>
+                    <div class="stat-label">Longitud</div>
+                </div>
+            </div>
+
+            <h3>🎯 Potencial para Eventos</h3>
+            <p><strong>Ventajas Competitivas:</strong></p>
+            <ul>
+                <li><strong>Máxima proximidad playera:</strong> Solo 210m promedio a la playa</li>
+                <li><strong>Enfoque boutique y exclusivo:</strong> Precio promedio más alto ($651.06)</li>
+                <li><strong>Alta calificación:</strong> 8.73 de rating con 3.63 estrellas promedio</li>
+                <li><strong>Potencial premium:</strong> Ideal para eventos de lujo y experiencias exclusivas</li>
+            </ul>
+        </div>
+
+        <!-- Navegación entre ciudades -->
+        <div class="cities-navigation">
+            <h2>Explora las Mejores Ciudades</h2>
+            <div class="nav-cards">
+                <div class="nav-card">
+                    <h3>🥇 Manta</h3>
+                    <p>Ciudad #1 en potencial para eventos</p>
+                    <div class="city-stats-mini">
+                        <span>151 hoteles</span>
+                        <span>Rating: 8.63</span>
+                        <span>Precio: $420.56</span>
+                    </div>
+                    <a href="index.html" class="nav-btn">Ver Análisis Completo</a>
+                </div>
+                
+                <div class="nav-card">
+                    <h3>🥈 Salinas</h3>
+                    <p>Ciudad #2 en potencial para eventos</p>
+                    <div class="city-stats-mini">
+                        <span>90 hoteles</span>
+                        <span>Rating: 8.90</span>
+                        <span>Precio: $529.77</span>
+                    </div>
+                    <a href="salinas.html" class="nav-btn">Ver Análisis Completo</a>
+                </div>
+                
+                <div class="nav-card current">
+                    <h3>🥉 Villamil Playas</h3>
+                    <p>Ciudad #3 en potencial para eventos</p>
+                    <div class="city-stats-mini">
+                        <span>71 hoteles</span>
+                        <span>Rating: 8.73</span>
+                        <span>Precio: $651.06</span>
+                    </div>
+                    <button class="nav-btn current-btn" disabled>Página Actual</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
