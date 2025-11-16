@@ -232,18 +232,11 @@ Utilizando **Structured Outputs con Pydantic** para asegurar consistencia:
 Final_Project_Generative_AI/
 ├── index.html                 # Dashboard principal
 ├── data/
-│   ├── processed_data.json    # Datos preprocesados
-│   ├── ai_insights.json       # Outputs de IA
-│   └── map_data.json         # Datos geoespaciales
+│   ├── ciudades.json    # Datos raw
 ├── notebooks/
-│   ├── 01_web_scraping.ipynb
-│   ├── 02_data_cleaning.ipynb
-│   ├── 03_feature_engineering.ipynb
-│   └── 04_ai_analysis.ipynb
-├── scripts/
-│   ├── scraper.py
-│   ├── generate_insights.py
-│   └── export_dashboard_data.py
+│   ├── proyecto_IA_Generativa.ipynb
+├── scrapper/
+│   ├── booking_scrapper_refactor_nuevo.py
 └── README.md
 ```
 
@@ -265,8 +258,6 @@ client = OpenAI(api_key="tu-api-key")
 ### Ejecución
 1. **Scraping**: Ejecutar notebooks en orden secuencial
 2. **Procesamiento**: Scripts de feature engineering
-3. **IA Generativa**: `generate_insights.py` con API key configurada
-4. **Export**: `export_dashboard_data.py` para generar JSONs
 5. **Deploy**: Push a GitHub Pages
 
 ---
