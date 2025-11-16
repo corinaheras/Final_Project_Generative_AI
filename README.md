@@ -8,7 +8,7 @@ El análisis combina **Web Mining (Scraping)**, **Ingeniería de Característica
 
 ## 🔗 Ver Dashboard en Vivo
 
-[Enlace al Dashboard](URL_AQUI)
+[Enlace al Dashboard](https://corinaheras.github.io/Final_Project_Generative_AI/)
 
 ## 🏖️ Destinos Analizados
 
