@@ -64,7 +64,7 @@ accessibility = 0.4 * (1 - center_distance_norm) + 0.6 * (1 - beach_distance_nor
 
 **Rationale:** La percepción cualitativa (sentimiento en reseñas) es un predictor más fuerte de la experiencia real que el rating numérico de la plataforma.
 ```python
-hospitality = 0.7 * sentiment_score_norm + 0.3 * rating_norm
+hospitality = 0.5 * sentiment_score_norm + 0.5 * rating_norm
 ```
 
 ##### c) Event Potential Index (EPI) - El Score Final
